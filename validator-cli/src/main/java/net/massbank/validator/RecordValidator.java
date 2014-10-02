@@ -36,41 +36,41 @@ import org.apache.commons.cli.*;
 public class RecordValidator {
 
 	/** 作業ディレクトリ用日時フォーマット */
-	private final SimpleDateFormat sdf = new SimpleDateFormat(
+	private final static SimpleDateFormat sdf = new SimpleDateFormat(
 			"yyMMdd_HHmmss_SSS");
 
 	/** 改行文字列 */
-	private final String NEW_LINE = System.getProperty("line.separator");
+	private final static String NEW_LINE = System.getProperty("line.separator");
 
 	/** アップロードレコードファイル名（ZIP） */
-	private final String UPLOAD_RECDATA_ZIP = "recdata.zip";
+	private final static String UPLOAD_RECDATA_ZIP = "recdata.zip";
 
 	/** zipファイル拡張子 */
-	private final String ZIP_EXTENSION = ".zip";
+	private final static String ZIP_EXTENSION = ".zip";
 
 	/** アップロードレコードファイル名（MSBK） */
-	private final String UPLOAD_RECDATA_MSBK = "*.msbk";
+	private final static String UPLOAD_RECDATA_MSBK = "*.msbk";
 
 	/** msbkファイル拡張子 */
-	private final String MSBK_EXTENSION = ".msbk";
+	private final static String MSBK_EXTENSION = ".msbk";
 
 	/** レコードデータディレクトリ名 */
-	private final String RECDATA_DIR_NAME = "recdata";
+	private final static String RECDATA_DIR_NAME = "recdata";
 
 	/** レコード拡張子 */
-	private final String REC_EXTENSION = ".txt";
+	private final static String REC_EXTENSION = ".txt";
 
 	/** レコード値デフォルト */
-	private final String DEFAULT_VALUE = "N/A";
+	private final static String DEFAULT_VALUE = "N/A";
 
 	/** ステータス（OK） */
-	private final String STATUS_OK = "<span class=\"msgFont\">ok</span>";
+	private final static String STATUS_OK = "<span class=\"msgFont\">ok</span>";
 
 	/** ステータス（警告） */
-	private final String STATUS_WARN = "<span class=\"warnFont\">warn</span>";
+	private final static String STATUS_WARN = "<span class=\"warnFont\">warn</span>";
 
 	/** ステータス（エラー） */
-	private final String STATUS_ERR = "<span class=\"errFont\">error</span>";
+	private final static String STATUS_ERR = "<span class=\"errFont\">error</span>";
 
 	/**
 	 * HTML表示用メッセージテンプレート（情報）
@@ -79,7 +79,7 @@ public class RecordValidator {
 	 *            メッセージ（情報）
 	 * @return 表示用メッセージ（情報）
 	 */
-	private String msgInfo(String msg) {
+	private static String msgInfo(String msg) {
 		StringBuilder sb = new StringBuilder(
 				"<i>info</i> : <span class=\"msgFont\">");
 		sb.append(msg);
@@ -94,7 +94,7 @@ public class RecordValidator {
 	 *            メッセージ（警告）
 	 * @return 表示用メッセージ（警告）
 	 */
-	private String msgWarn(String msg) {
+	private static String msgWarn(String msg) {
 		StringBuilder sb = new StringBuilder(
 				"<i>warn</i> : <span class=\"warnFont\">");
 		sb.append(msg);
@@ -109,7 +109,7 @@ public class RecordValidator {
 	 *            メッセージ（エラー）
 	 * @return 表示用メッセージ（エラー）
 	 */
-	private String msgErr(String msg) {
+	private static String msgErr(String msg) {
 		StringBuilder sb = new StringBuilder(
 				"<i>error</i> : <span class=\"errFont\">");
 		sb.append(msg);
@@ -134,7 +134,7 @@ public class RecordValidator {
 	 * @throws IOException
 	 *             入出力例外
 	 */
-	private TreeMap<String, String> validationRecord(DatabaseAccess db,
+	private static TreeMap<String, String> validationRecord(DatabaseAccess db,
 			PrintStream op, String dataPath, String registPath, int ver)
 			throws IOException {
 
@@ -798,7 +798,7 @@ public class RecordValidator {
 	 * @return 結果
 	 * @throws IOException
 	 */
-	private boolean dispResult(PrintStream op, TreeMap<String, String> resultMap)
+	private static boolean dispResult(PrintStream op, TreeMap<String, String> resultMap)
 			throws IOException {
 
 		// ----------------------------------------------------
@@ -854,34 +854,39 @@ public class RecordValidator {
 		return true;
 	}
 
-	public void printHelp(Options lvOptions) {
-		 HelpFormatter lvFormater = new HelpFormatter();
-		 lvFormater.printHelp("Programm_Name", lvOptions);	
+	public static void printHelp(Options lvOptions) {
+		HelpFormatter lvFormater = new HelpFormatter();
+		lvFormater.printHelp("Programm_Name", lvOptions);
 	}
-	
-	public void main(String [ ] args) {
-		//HttpServletRequest request;
-		PrintStream out;
 
-		 Options lvOptions = new Options();
-		 lvOptions.addOption("h", "help", false, "show this help.");
-		 lvOptions.addOption("r", "recdata", true, "points to the recdata directory containing massbank records. Reads all *.txt files in there.");
+	public static void main(String[] args) {
+		RequestDummy request;
 
-		 CommandLineParser lvParser = new BasicParser();
-		 CommandLine lvCmd = null;
-		 try {
-		             lvCmd = lvParser.parse(lvOptions, args);
-		             if (lvCmd.hasOption('h')) {
-		                 printHelp(lvOptions);
-		                 return;
-		             }
+		PrintStream out = System.out;
 
-		     } catch (ParseException pvException) {
-		             System.out.println(pvException.getMessage());
-		     }
-		 
-		 
-		 
+		Options lvOptions = new Options();
+		lvOptions.addOption("h", "help", false, "show this help.");
+		lvOptions
+				.addOption(
+						"r",
+						"recdata",
+						true,
+						"points to the recdata directory containing massbank records. Reads all *.txt files in there.");
+
+		CommandLineParser lvParser = new BasicParser();
+		CommandLine lvCmd = null;
+		try {
+			lvCmd = lvParser.parse(lvOptions, args);
+			if (lvCmd.hasOption('h')) {
+				printHelp(lvOptions);
+				return;
+			}
+		} catch (org.apache.commons.cli.ParseException pvException) {
+			System.out.println(pvException.getMessage());
+		}
+
+		String recdatapath = lvCmd.getOptionValue("recdata");
+
 		// ---------------------------------------------
 		// 各種パラメータ取得および設定
 		// ---------------------------------------------
@@ -890,14 +895,13 @@ public class RecordValidator {
 		final String dbRootPath = MassBankEnv
 				.get(MassBankEnv.KEY_ANNOTATION_PATH);
 		final String dbHostName = MassBankEnv.get(MassBankEnv.KEY_DB_HOST_NAME);
-		final String tomcatTmpPath = MassBankEnv
-				.get(MassBankEnv.KEY_TOMCAT_TEMP_PATH);
+		final String tomcatTmpPath = ".";
 		final String tmpPath = (new File(tomcatTmpPath + sdf.format(new Date())))
 				.getPath() + File.separator;
 		GetConfig conf = new GetConfig(baseUrl);
 		int recVersion = 2;
 		String selDbName = "";
-		FileUpload up = null;
+		Object up = null; // Was: file Upload
 		boolean isResult = true;
 		String upFileName = "";
 		boolean upResult = false;
@@ -907,19 +911,19 @@ public class RecordValidator {
 			// ----------------------------------------------------
 			// ファイルアップロード時の初期化処理
 			// ----------------------------------------------------
-			if (FileUpload.isMultipartContent(request)) {
-				(new File(tmpPath)).mkdir();
-				String os = System.getProperty("os.name");
-				if (os.indexOf("Windows") == -1) {
-					isResult = FileUtil.changeMode("777", tmpPath);
-					if (!isResult) {
-						out.println(msgErr("[" + tmpPath
-								+ "]&nbsp;&nbsp; chmod failed."));
-						return;
-					}
-				}
-				up = new FileUpload(request, tmpPath);
-			}
+			// if (FileUpload.isMultipartContent(request)) {
+			// (new File(tmpPath)).mkdir();
+			// String os = System.getProperty("os.name");
+			// if (os.indexOf("Windows") == -1) {
+			// isResult = FileUtil.changeMode("777", tmpPath);
+			// if (!isResult) {
+			// out.println(msgErr("[" + tmpPath
+			// + "]&nbsp;&nbsp; chmod failed."));
+			// return;
+			// }
+			// }
+			// up = new FileUpload(request, tmpPath);
+			// }
 
 			// ----------------------------------------------------
 			// 存在するDB名取得（ディレクトリによる判定）
@@ -952,37 +956,38 @@ public class RecordValidator {
 			// ----------------------------------------------------
 			// リクエスト取得
 			// ----------------------------------------------------
-			if (FileUpload.isMultipartContent(request)) {
-				HashMap<String, String[]> reqParamMap = new HashMap<String, String[]>();
-				reqParamMap = up.getRequestParam();
-				if (reqParamMap != null) {
-					for (Map.Entry<String, String[]> req : reqParamMap
-							.entrySet()) {
-						if (req.getKey().equals("ver")) {
-							try {
-								recVersion = Integer
-										.parseInt(req.getValue()[0]);
-							} catch (NumberFormatException nfe) {
-							}
-						} else if (req.getKey().equals("db")) {
-							selDbName = req.getValue()[0];
-						}
-					}
-				}
-			} else {
-				if (request.getParameter("ver") != null) {
-					try {
-						recVersion = Integer.parseInt(request
-								.getParameter("ver"));
-					} catch (NumberFormatException nfe) {
-					}
-				}
-				selDbName = request.getParameter("db");
-			}
-			if (selDbName == null || selDbName.equals("")
-					|| !dbNames.contains(selDbName)) {
-				selDbName = dbNames.get(0);
-			}
+			// if (FileUpload.isMultipartContent(request)) {
+			// HashMap<String, String[]> reqParamMap = new HashMap<String,
+			// String[]>();
+			// reqParamMap = up.getRequestParam();
+			// if (reqParamMap != null) {
+			// for (Map.Entry<String, String[]> req : reqParamMap
+			// .entrySet()) {
+			// if (req.getKey().equals("ver")) {
+			// try {
+			// recVersion = Integer
+			// .parseInt(req.getValue()[0]);
+			// } catch (NumberFormatException nfe) {
+			// }
+			// } else if (req.getKey().equals("db")) {
+			// selDbName = req.getValue()[0];
+			// }
+			// }
+			// }
+			// } else {
+			// if (request.getParameter("ver") != null) {
+			// try {
+			// recVersion = Integer.parseInt(request
+			// .getParameter("ver"));
+			// } catch (NumberFormatException nfe) {
+			// }
+			// }
+			// selDbName = request.getParameter("db");
+			// }
+			// if (selDbName == null || selDbName.equals("")
+			// || !dbNames.contains(selDbName)) {
+			// selDbName = dbNames.get(0);
+			// }
 
 			// ---------------------------------------------
 			// フォーム表示
@@ -1023,52 +1028,50 @@ public class RecordValidator {
 					+ "</a>] or [" + UPLOAD_RECDATA_MSBK + "].</span><br>");
 			out.println("</form>");
 			out.println("<hr><br>");
-			if (!FileUpload.isMultipartContent(request)) {
-				return;
-			} else {
-				if (selDbName.equals("")) {
-					out.println(msgErr("please select database."));
-					return;
-				}
-			}
+			// if (!FileUpload.isMultipartContent(request)) {
+			// return;
+			// } else {
+			// if (selDbName.equals("")) {
+			// out.println(msgErr("please select database."));
+			// return;
+			// }
+			// }
 
 			// ---------------------------------------------
 			// ファイルアップロード
 			// ---------------------------------------------
-			HashMap<String, Boolean> upFileMap = up.doUpload();
-			if (upFileMap != null) {
-				for (Map.Entry<String, Boolean> e : upFileMap.entrySet()) {
-					upFileName = e.getKey();
-					upResult = e.getValue();
-					break;
-				}
-				if (upFileName.equals("")) {
-					out.println(msgErr("please select file."));
-					isResult = false;
-				} else if (!upResult) {
-					out.println(msgErr("[" + upFileName
-							+ "]&nbsp;&nbsp;upload failed."));
-					isResult = false;
-				} else if (!upFileName.endsWith(ZIP_EXTENSION)
-						&& !upFileName.endsWith(MSBK_EXTENSION)) {
-					out.println(msgErr("please select&nbsp;&nbsp;["
-							+ UPLOAD_RECDATA_ZIP
-							+ "]&nbsp;&nbsp;or&nbsp;&nbsp;["
-							+ UPLOAD_RECDATA_MSBK + "]."));
-					up.deleteFile(upFileName);
-					isResult = false;
-				}
-			} else {
-				out.println(msgErr("server error."));
-				isResult = false;
-			}
-			up.deleteFileItem();
-			if (!isResult) {
-				return;
-			}
+//			HashMap<String, Boolean> upFileMap = up.doUpload();
+//			if (upFileMap != null) {
+//				for (Map.Entry<String, Boolean> e : upFileMap.entrySet()) {
+//					upFileName = e.getKey();
+//					upResult = e.getValue();
+//					break;
+//				}
+//				if (upFileName.equals("")) {
+//					out.println(msgErr("please select file."));
+//					isResult = false;
+//				} else if (!upResult) {
+//					out.println(msgErr("[" + upFileName
+//							+ "]&nbsp;&nbsp;upload failed."));
+//					isResult = false;
+//				} else if (!upFileName.endsWith(ZIP_EXTENSION)
+//						&& !upFileName.endsWith(MSBK_EXTENSION)) {
+//					out.println(msgErr("please select&nbsp;&nbsp;["
+//							+ UPLOAD_RECDATA_ZIP
+//							+ "]&nbsp;&nbsp;or&nbsp;&nbsp;["
+//							+ UPLOAD_RECDATA_MSBK + "]."));
+//					up.deleteFile(upFileName);
+//					isResult = false;
+//				}
+//			} else {
+//				out.println(msgErr("server error."));
+//				isResult = false;
+//			}
+//			up.deleteFileItem();
+//			if (!isResult) {
+//				return;
+//			}
 
-			
-			
 			// ---------------------------------------------
 			// アップロードファイルの解凍処理
 			// ---------------------------------------------
@@ -1099,6 +1102,7 @@ public class RecordValidator {
 			final String recDataPath = (new File(tmpPath + File.separator
 					+ RECDATA_DIR_NAME)).getPath()
 					+ File.separator;
+
 			if (!(new File(recDataPath)).isDirectory()) {
 				if (upFileName.endsWith(ZIP_EXTENSION)) {
 					out.println(msgErr("["
@@ -1134,6 +1138,9 @@ public class RecordValidator {
 			// 表示処理
 			// ---------------------------------------------
 			isResult = dispResult(out, resultMap);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		} finally {
 			if (db != null) {
 				db.close();
