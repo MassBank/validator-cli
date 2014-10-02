@@ -134,15 +134,12 @@ public class RecordValidator {
 	 * @throws IOException
 	 *             入出力例外
 	 */
-	private static TreeMap<String, String> validationRecord(DatabaseAccess db,
+	private static TreeMap<String, String> validationRecord(DatabaseAccess dbx,
 			PrintStream op, String dataPath, String registPath, int ver)
 			throws IOException {
 
-		op.println(msgInfo("validation archive is&nbsp;&nbsp;["
-				+ UPLOAD_RECDATA_ZIP + "]&nbsp;&nbsp;or&nbsp;&nbsp;["
-				+ UPLOAD_RECDATA_MSBK + "]."));
 		if (ver == 1) {
-			op.println(msgInfo("check record format version is&nbsp;&nbsp;[version 1]."));
+			op.println(msgInfo("check record format version is [version 1]."));
 		}
 
 		final String[] dataList = (new File(dataPath)).list();
@@ -719,71 +716,71 @@ public class RecordValidator {
 			validationMap.put(name, status + "\t" + details);
 		}
 
-		// ----------------------------------------------------
-		// 登録済みデータ重複チェック処理
-		// ----------------------------------------------------
-		// 登録済みIDリスト生成（DB）
-		HashSet<String> regIdList = new HashSet<String>();
-		String[] sqls = { "SELECT ID FROM SPECTRUM ORDER BY ID",
-				"SELECT ID FROM RECORD ORDER BY ID",
-				"SELECT ID FROM PEAK GROUP BY ID ORDER BY ID",
-				"SELECT ID FROM CH_NAME ID ORDER BY ID",
-				"SELECT ID FROM CH_LINK ID ORDER BY ID",
-				"SELECT ID FROM TREE WHERE ID IS NOT NULL AND ID<>'' ORDER BY ID" };
-		for (int i = 0; i < sqls.length; i++) {
-			String execSql = sqls[i];
-			ResultSet rs = null;
-			try {
-				rs = db.executeQuery(execSql);
-				while (rs.next()) {
-					String idStr = rs.getString("ID");
-					regIdList.add(idStr);
-				}
-			} catch (SQLException e) {
-				Logger.getLogger("global").severe("    sql : " + execSql);
-				e.printStackTrace();
-				op.println(msgErr("database access error."));
-				return new TreeMap<String, String>();
-			} finally {
-				try {
-					if (rs != null) {
-						rs.close();
-					}
-				} catch (SQLException e) {
-				}
-			}
-		}
-		// 登録済みIDリスト生成（レコードファイル）
-		final String[] recFileList = (new File(registPath)).list();
-		for (int i = 0; i < recFileList.length; i++) {
-			String name = recFileList[i];
-			File file = new File(registPath + File.separator + name);
-			if (!file.isFile() || file.isHidden()
-					|| name.lastIndexOf(REC_EXTENSION) == -1) {
-				continue;
-			}
-			String idStr = name.replace(REC_EXTENSION, "");
-			regIdList.add(idStr);
-		}
+//		// ----------------------------------------------------
+//		// 登録済みデータ重複チェック処理
+//		// ----------------------------------------------------
+//		// 登録済みIDリスト生成（DB）
+//		HashSet<String> regIdList = new HashSet<String>();
+//		String[] sqls = { "SELECT ID FROM SPECTRUM ORDER BY ID",
+//				"SELECT ID FROM RECORD ORDER BY ID",
+//				"SELECT ID FROM PEAK GROUP BY ID ORDER BY ID",
+//				"SELECT ID FROM CH_NAME ID ORDER BY ID",
+//				"SELECT ID FROM CH_LINK ID ORDER BY ID",
+//				"SELECT ID FROM TREE WHERE ID IS NOT NULL AND ID<>'' ORDER BY ID" };
+//		for (int i = 0; i < sqls.length; i++) {
+//			String execSql = sqls[i];
+//			ResultSet rs = null;
+//			try {
+//				rs = db.executeQuery(execSql);
+//				while (rs.next()) {
+//					String idStr = rs.getString("ID");
+//					regIdList.add(idStr);
+//				}
+//			} catch (SQLException e) {
+//				Logger.getLogger("global").severe("    sql : " + execSql);
+//				e.printStackTrace();
+//				op.println(msgErr("database access error."));
+//				return new TreeMap<String, String>();
+//			} finally {
+//				try {
+//					if (rs != null) {
+//						rs.close();
+//					}
+//				} catch (SQLException e) {
+//				}
+//			}
+//		}
+//		// 登録済みIDリスト生成（レコードファイル）
+//		final String[] recFileList = (new File(registPath)).list();
+//		for (int i = 0; i < recFileList.length; i++) {
+//			String name = recFileList[i];
+//			File file = new File(registPath + File.separator + name);
+//			if (!file.isFile() || file.isHidden()
+//					|| name.lastIndexOf(REC_EXTENSION) == -1) {
+//				continue;
+//			}
+//			String idStr = name.replace(REC_EXTENSION, "");
+//			regIdList.add(idStr);
+//		}
 
-		// 登録済みチェック
-		for (Map.Entry<String, String> e : validationMap.entrySet()) {
-			String statusStr = e.getValue().split("\t")[0];
-			if (statusStr.equals(STATUS_ERR)) {
-				continue;
-			}
-			String nameStr = e.getKey();
-			String idStr = e.getKey().replace(REC_EXTENSION, "");
-			String detailsStr = e.getValue().split("\t")[1];
-			if (regIdList.contains(idStr)) {
-				statusStr = STATUS_WARN;
-				detailsStr += "<span class=\"warnFont\">id&nbsp;&nbsp;["
-						+ idStr + "]&nbsp;&nbsp;of file name&nbsp;&nbsp;["
-						+ nameStr
-						+ "]&nbsp;&nbsp;already registered.</span><br />";
-				validationMap.put(nameStr, statusStr + "\t" + detailsStr);
-			}
-		}
+//		// 登録済みチェック
+//		for (Map.Entry<String, String> e : validationMap.entrySet()) {
+//			String statusStr = e.getValue().split("\t")[0];
+//			if (statusStr.equals(STATUS_ERR)) {
+//				continue;
+//			}
+//			String nameStr = e.getKey();
+//			String idStr = e.getKey().replace(REC_EXTENSION, "");
+//			String detailsStr = e.getValue().split("\t")[1];
+//			if (regIdList.contains(idStr)) {
+//				statusStr = STATUS_WARN;
+//				detailsStr += "<span class=\"warnFont\">id&nbsp;&nbsp;["
+//						+ idStr + "]&nbsp;&nbsp;of file name&nbsp;&nbsp;["
+//						+ nameStr
+//						+ "]&nbsp;&nbsp;already registered.</span><br />";
+//				validationMap.put(nameStr, statusStr + "\t" + detailsStr);
+//			}
+//		}
 
 		return validationMap;
 	}
@@ -885,15 +882,14 @@ public class RecordValidator {
 			System.out.println(pvException.getMessage());
 		}
 
-		String recdatapath = lvCmd.getOptionValue("recdata");
+		String recDataPath = lvCmd.getOptionValue("recdata");
 
 		// ---------------------------------------------
 		// 各種パラメータ取得および設定
 		// ---------------------------------------------
 
 		final String baseUrl = MassBankEnv.get(MassBankEnv.KEY_BASE_URL);
-		final String dbRootPath = MassBankEnv
-				.get(MassBankEnv.KEY_ANNOTATION_PATH);
+		final String dbRootPath = "./";
 		final String dbHostName = MassBankEnv.get(MassBankEnv.KEY_DB_HOST_NAME);
 		final String tomcatTmpPath = ".";
 		final String tmpPath = (new File(tomcatTmpPath + sdf.format(new Date())))
@@ -992,50 +988,23 @@ public class RecordValidator {
 			// ---------------------------------------------
 			// フォーム表示
 			// ---------------------------------------------
-			out.println("<form name=\"formMain\" action=\"./RecordValidator.jsp\" enctype=\"multipart/form-data\" method=\"post\" onSubmit=\"doWait()\">");
-			out.println("\t<span class=\"baseFont\">Database :</span>&nbsp;");
-			out.println("\t<select name=\"db\" class=\"db\" onChange=\"selDb();\">");
+			out.println("Database: ");
 			for (int i = 0; i < dbNames.size(); i++) {
 				String dbName = dbNames.get(i);
-				out.print("<option value=\"" + dbName + "\"");
+				out.print("dbName");
 				if (dbName.equals(selDbName)) {
 					out.print(" selected");
 				}
 				if (i == 0) {
-					out.println(">------------------</option>");
+					out.println("------------------");
 				} else {
-					out.println(">" + dbName + "</option>");
+					out.println(dbName);
 				}
 			}
-			out.println("\t</select>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
-			out.println("\t<span class=\"baseFont\">Record Version :</span>&nbsp;");
-			String ver2Chk = (recVersion == 2) ? " checked" : "";
-			String ver1Chk = (recVersion == 1) ? " checked" : "";
-			out.println("\t<input type=\"radio\" name=\"ver\" value=\"2\""
-					+ ver2Chk
-					+ ">2&nbsp;&nbsp;&nbsp;<input type=\"radio\" name=\"ver\" value=\"1\""
-					+ ver1Chk
-					+ ">1&nbsp;<span class=\"note\">(old record version)</span>");
-			out.println("\t<br><br>");
-			out.println("\t<span class=\"baseFont\">Record Archive :</span>&nbsp;");
-			out.println("\t<input type=\"file\" name=\"file\" size=\"70\">&nbsp;<input type=\"submit\" value=\"Validation\"><br>");
-			out.println("\t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
-			out.println("\t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
-			out.println("\t&nbsp;<span class=\"note\">* please specify your [<a href=\""
-					+ "RECDATA_ZIP_URL"
-					+ "\">"
-					+ "UPLOAD_RECDATA_ZIP"
-					+ "</a>] or [" + UPLOAD_RECDATA_MSBK + "].</span><br>");
-			out.println("</form>");
-			out.println("<hr><br>");
-			// if (!FileUpload.isMultipartContent(request)) {
-			// return;
-			// } else {
-			// if (selDbName.equals("")) {
-			// out.println(msgErr("please select database."));
-			// return;
-			// }
-			// }
+			out.println("Record Version : ");
+			out.println(recVersion);
+
+			out.println("Record Archive :");
 
 			// ---------------------------------------------
 			// ファイルアップロード
@@ -1075,22 +1044,22 @@ public class RecordValidator {
 			// ---------------------------------------------
 			// アップロードファイルの解凍処理
 			// ---------------------------------------------
-			final String upFilePath = (new File(tmpPath + File.separator
-					+ upFileName)).getPath();
-			isResult = FileUtil.unZip(upFilePath, tmpPath);
-			if (!isResult) {
-				out.println(msgErr("["
-						+ upFileName
-						+ "]&nbsp;&nbsp; extraction failed. possibility of time-out."));
-				return;
-			}
+//			final String upFilePath = (new File(tmpPath + File.separator
+//					+ upFileName)).getPath();
+//			isResult = FileUtil.unZip(upFilePath, tmpPath);
+//			if (!isResult) {
+//				out.println(msgErr("["
+//						+ upFileName
+//						+ "]&nbsp;&nbsp; extraction failed. possibility of time-out."));
+//				return;
+//			}
 
 			// ---------------------------------------------
 			// アップロードファイル格納ディレクトリ存在確認
 			// ---------------------------------------------
 			final String recPath = (new File(dbRootPath + File.separator
 					+ selDbName)).getPath();
-			File tmpRecDir = new File(recPath);
+			File tmpRecDir = new File(recDataPath);
 			if (!tmpRecDir.isDirectory()) {
 				tmpRecDir.mkdirs();
 			}
@@ -1099,31 +1068,31 @@ public class RecordValidator {
 			// 解凍ファイルチェック処理
 			// ---------------------------------------------
 			// dataディレクトリ存在チェック
-			final String recDataPath = (new File(tmpPath + File.separator
-					+ RECDATA_DIR_NAME)).getPath()
-					+ File.separator;
-
-			if (!(new File(recDataPath)).isDirectory()) {
-				if (upFileName.endsWith(ZIP_EXTENSION)) {
-					out.println(msgErr("["
-							+ RECDATA_DIR_NAME
-							+ "]&nbsp;&nbsp; directory is not included in the up-loading file."));
-				} else if (upFileName.endsWith(MSBK_EXTENSION)) {
-					out.println(msgErr("The uploaded file is not record data."));
-				}
-				return;
-			}
+//			final String recDataPath = (new File(tmpPath + File.separator
+//					+ RECDATA_DIR_NAME)).getPath()
+//					+ File.separator;
+//
+//			if (!(new File(recDataPath)).isDirectory()) {
+//				if (upFileName.endsWith(ZIP_EXTENSION)) {
+//					out.println(msgErr("["
+//							+ RECDATA_DIR_NAME
+//							+ "]&nbsp;&nbsp; directory is not included in the up-loading file."));
+//				} else if (upFileName.endsWith(MSBK_EXTENSION)) {
+//					out.println(msgErr("The uploaded file is not record data."));
+//				}
+//				return;
+//			}
 
 			// ---------------------------------------------
 			// DB接続
 			// ---------------------------------------------
-			db = new DatabaseAccess(dbHostName, selDbName);
-			isResult = db.open();
-			if (!isResult) {
-				db.close();
-				out.println(msgErr("not connect to database."));
-				return;
-			}
+//			db = new DatabaseAccess(dbHostName, selDbName);
+//			isResult = db.open();
+//			if (!isResult) {
+//				db.close();
+//				out.println(msgErr("not connect to database."));
+//				return;
+//			}
 
 			// ---------------------------------------------
 			// チェック処理
@@ -1153,6 +1122,677 @@ public class RecordValidator {
 			out.println("</html>");
 		}
 
+	}
+
+	/**
+	 * チェック処理
+	 * 
+	 * @param db
+	 *            DBアクセスオブジェクト
+	 * @param op
+	 *            PrintWriter出力バッファ
+	 * @param dataPath
+	 *            チェック対象レコードパス
+	 * @param registPath
+	 *            登録先予定パス
+	 * @param ver
+	 *            レコードフォーマットバージョン
+	 * @return チェック結果Map<ファイル名, 画面表示用タブ区切り文字列>
+	 * @throws IOException
+	 *             入出力例外
+	 */
+	private static TreeMap<String, String> validationRecordOnline(DatabaseAccess db,
+			PrintStream op, String dataPath, String registPath, int ver)
+			throws IOException {
+	
+		op.println(msgInfo("validation archive is&nbsp;&nbsp;["
+				+ UPLOAD_RECDATA_ZIP + "]&nbsp;&nbsp;or&nbsp;&nbsp;["
+				+ UPLOAD_RECDATA_MSBK + "]."));
+		if (ver == 1) {
+			op.println(msgInfo("check record format version is&nbsp;&nbsp;[version 1]."));
+		}
+	
+		final String[] dataList = (new File(dataPath)).list();
+		TreeMap<String, String> validationMap = new TreeMap<String, String>();
+	
+		if (dataList.length == 0) {
+			op.println(msgWarn("no file for validation."));
+			return validationMap;
+		}
+	
+		// ----------------------------------------------------
+		// レコードファイル必須項目、必須項目値チェック処理
+		// ----------------------------------------------------
+		String[] requiredList = new String[] { // Ver.2
+		"ACCESSION: ", "RECORD_TITLE: ", "DATE: ", "AUTHORS: ", "LICENSE: ",
+				"CH$NAME: ", "CH$COMPOUND_CLASS: ", "CH$FORMULA: ",
+				"CH$EXACT_MASS: ", "CH$SMILES: ", "CH$IUPAC: ",
+				"AC$INSTRUMENT: ", "AC$INSTRUMENT_TYPE: ",
+				"AC$MASS_SPECTROMETRY: MS_TYPE ",
+				"AC$MASS_SPECTROMETRY: ION_MODE ", "PK$NUM_PEAK: ", "PK$PEAK: " };
+		if (ver == 1) { // Ver.1
+			requiredList = new String[] { "ACCESSION: ", "RECORD_TITLE: ",
+					"DATE: ", "AUTHORS: ", "COPYRIGHT: ", "CH$NAME: ",
+					"CH$COMPOUND_CLASS: ", "CH$FORMULA: ", "CH$EXACT_MASS: ",
+					"CH$SMILES: ", "CH$IUPAC: ", "AC$INSTRUMENT: ",
+					"AC$INSTRUMENT_TYPE: ", "AC$ANALYTICAL_CONDITION: MODE ",
+					"PK$NUM_PEAK: ", "PK$PEAK: " };
+		}
+		for (int i = 0; i < dataList.length; i++) {
+			String name = dataList[i];
+			String status = "";
+			StringBuilder detailsErr = new StringBuilder();
+			StringBuilder detailsWarn = new StringBuilder();
+	
+			// 読み込み対象チェック処理
+			File file = new File(dataPath + name);
+			if (file.isDirectory()) {
+				// ディレクトリの場合
+				status = STATUS_ERR;
+				detailsErr.append("<span class=\"errFont\">[" + name
+						+ "]&nbsp;&nbsp;is directory.</span><br />");
+				validationMap.put(name, status + "\t" + detailsErr.toString());
+				continue;
+			} else if (file.isHidden()) {
+				// 隠しファイルの場合
+				status = STATUS_ERR;
+				detailsErr.append("<span class=\"errFont\">[" + name
+						+ "]&nbsp;&nbsp;is hidden.</span><br />");
+				validationMap.put(name, status + "\t" + detailsErr.toString());
+				continue;
+			} else if (name.lastIndexOf(REC_EXTENSION) == -1) {
+				// ファイル拡張子不正の場合
+				status = STATUS_ERR;
+				detailsErr
+						.append("<span class=\"errFont\">file extension of&nbsp;&nbsp;["
+								+ name
+								+ "]&nbsp;&nbsp;is not&nbsp;&nbsp;["
+								+ REC_EXTENSION + "].</span><br />");
+				validationMap.put(name, status + "\t" + detailsErr.toString());
+				continue;
+			}
+	
+			// 読み込み
+			boolean isEndTagRead = false;
+			boolean isInvalidInfo = false;
+			boolean isDoubleByte = false;
+			ArrayList<String> fileContents = new ArrayList<String>();
+			boolean existLicense = false; // LICENSEタグ存在チェック用（Ver.1）
+			ArrayList<String> workChName = new ArrayList<String>(); // RECORD_TITLEチェック用にCH$NAMEの値を退避（Ver.1以降）
+			String workAcInstrumentType = ""; // RECORD_TITLEチェック用にAC$INSTRUMENT_TYPEの値を退避（Ver.1以降）
+			String workAcMsType = ""; // RECORD_TITLEチェック用にAC$MASS_SPECTROMETRY:
+										// MS_TYPEの値を退避（Ver.2）
+			String line = "";
+			BufferedReader br = null;
+			try {
+				br = new BufferedReader(new FileReader(file));
+				while ((line = br.readLine()) != null) {
+					if (isEndTagRead) {
+						if (!line.equals("")) {
+							isInvalidInfo = true;
+						}
+					}
+	
+					// 終了タグ検出時フラグセット
+					if (line.startsWith("//")) {
+						isEndTagRead = true;
+					}
+					fileContents.add(line);
+	
+					// LICENSE退避（Ver.1）
+					if (line.startsWith("LICENSE: ")) {
+						existLicense = true;
+					}
+					// CH$NAME退避（Ver.1以降）
+					else if (line.startsWith("CH$NAME: ")) {
+						workChName.add(line.trim()
+								.replaceAll("CH\\$NAME: ", ""));
+					}
+					// AC$INSTRUMENT_TYPE退避（Ver.1以降）
+					else if (line.startsWith("AC$INSTRUMENT_TYPE: ")) {
+						workAcInstrumentType = line.trim().replaceAll(
+								"AC\\$INSTRUMENT_TYPE: ", "");
+					}
+					// AC$MASS_SPECTROMETRY: MS_TYPE退避（Ver.2）
+					else if (ver != 1
+							&& line.startsWith("AC$MASS_SPECTROMETRY: MS_TYPE ")) {
+						workAcMsType = line.trim().replaceAll(
+								"AC\\$MASS_SPECTROMETRY: MS_TYPE ", "");
+					}
+	
+					// 全角文字混入チェック
+					if (!isDoubleByte) {
+						byte[] bytes = line.getBytes("MS932");
+						if (bytes.length != line.length()) {
+							isDoubleByte = true;
+						}
+					}
+				}
+			} catch (IOException e) {
+				Logger.getLogger("global").severe(
+						"file read failed." + NEW_LINE + "    "
+								+ file.getPath());
+				e.printStackTrace();
+				op.println(msgErr("server error."));
+				validationMap.clear();
+				return validationMap;
+			} finally {
+				try {
+					if (br != null) {
+						br.close();
+					}
+				} catch (IOException e) {
+				}
+			}
+			if (isInvalidInfo) {
+				// 終了タグ以降の記述がある場合
+				if (status.equals(""))
+					status = STATUS_WARN;
+				detailsWarn
+						.append("<span class=\"warnFont\">invalid after the end tag&nbsp;&nbsp;[//].</span><br />");
+			}
+			if (isDoubleByte) {
+				// 全角文字が混入している場合
+				if (status.equals(""))
+					status = STATUS_ERR;
+				detailsErr
+						.append("<span class=\"errFont\">double-byte character included.</span><br />");
+			}
+			if (ver == 1 && existLicense) {
+				// LICENSEタグが存在する場合（Ver.1）
+				if (status.equals(""))
+					status = STATUS_ERR;
+				detailsErr
+						.append("<span class=\"errFont\">[LICENSE: ]&nbsp;&nbsp;tag can not be used in record format &nbsp;&nbsp;[version 1].</span><br />");
+			}
+	
+			// ----------------------------------------------------
+			// 必須項目に対するメインチェック処理
+			// ----------------------------------------------------
+			boolean isNameCheck = false;
+			int peakNum = -1;
+			for (int j = 0; j < requiredList.length; j++) {
+				String requiredStr = requiredList[j];
+				ArrayList<String> valStrs = new ArrayList<String>(); // 値
+				boolean findRequired = false; // 必須項目検出フラグ
+				boolean findValue = false; // 値検出フラグ
+				boolean isPeakMode = false; // ピーク情報検出モード
+				for (int k = 0; k < fileContents.size(); k++) {
+					String lineStr = fileContents.get(k);
+	
+					// 終了タグもしくはRELATED_RECORDタグ以降は無効（必須項目検出対象としない）
+					if (lineStr.startsWith("//")) { // Ver.1以降
+						break;
+					} else if (ver == 1
+							&& lineStr.startsWith("RELATED_RECORD:")) { // Ver.1
+						break;
+					}
+					// 値（ピーク情報）検出（終了タグまでを全てピーク情報とする）
+					else if (isPeakMode) {
+						findRequired = true;
+						if (!lineStr.trim().equals("")) {
+							valStrs.add(lineStr);
+						}
+					}
+					// 必須項目が見つかった場合
+					else if (lineStr.indexOf(requiredStr) != -1) {
+						// 必須項目検出
+						findRequired = true;
+						if (requiredStr.equals("PK$PEAK: ")) {
+							isPeakMode = true;
+							findValue = true;
+							valStrs.add(lineStr.replace(requiredStr, ""));
+						} else {
+							// 値検出
+							String tmpVal = lineStr.replace(requiredStr, "");
+							if (!tmpVal.trim().equals("")) {
+								findValue = true;
+								valStrs.add(tmpVal);
+							}
+							break;
+						}
+					}
+				}
+				if (!findRequired) {
+					// 必須項目が見つからない場合
+					status = STATUS_ERR;
+					detailsErr
+							.append("<span class=\"errFont\">no required item&nbsp;&nbsp;["
+									+ requiredStr + "].</span><br />");
+				} else {
+					if (!findValue) {
+						// 値が存在しない場合
+						status = STATUS_ERR;
+						detailsErr
+								.append("<span class=\"errFont\">no value of required item&nbsp;&nbsp;["
+										+ requiredStr + "].</span><br />");
+					} else {
+						// 値が存在する場合
+	
+						// ----------------------------------------------------
+						// 各値チェック
+						// ----------------------------------------------------
+						String val = (valStrs.size() > 0) ? valStrs.get(0) : "";
+						// ACESSION（Ver.1以降）
+						if (requiredStr.equals("ACCESSION: ")) {
+							if (!val.equals(name.replace(REC_EXTENSION, ""))) {
+								status = STATUS_ERR;
+								detailsErr
+										.append("<span class=\"errFont\">value of required item&nbsp;&nbsp;["
+												+ requiredStr
+												+ "]&nbsp;&nbsp;not correspond to file name.</span><br />");
+							}
+							if (val.length() != 8) {
+								status = STATUS_ERR;
+								detailsErr
+										.append("<span class=\"errFont\">value of required item&nbsp;&nbsp;["
+												+ requiredStr
+												+ "]&nbsp;&nbsp;is 8 digits necessary.</span><br />");
+							}
+						}
+						// RECORD_TITLE（Ver.1以降）
+						else if (requiredStr.equals("RECORD_TITLE: ")) {
+							if (!val.equals(DEFAULT_VALUE)) {
+								if (val.indexOf(";") != -1) {
+									String[] recTitle = val.split(";");
+									if (!workChName
+											.contains(recTitle[0].trim())) {
+										if (status.equals(""))
+											status = STATUS_WARN;
+										detailsWarn
+												.append("<span class=\"warnFont\">value of required item&nbsp;&nbsp;["
+														+ requiredStr
+														+ "],&nbsp;&nbsp;compound name is not included in the&nbsp;&nbsp;[CH$NAME].</span><br />");
+									}
+									if (!workAcInstrumentType
+											.equals(recTitle[1].trim())) {
+										if (status.equals(""))
+											status = STATUS_WARN;
+										detailsWarn
+												.append("<span class=\"warnFont\">value of required item&nbsp;&nbsp;["
+														+ requiredStr
+														+ "],&nbsp;&nbsp;instrument type is different from&nbsp;&nbsp;[AC$INSTRUMENT_TYPE].</span><br />");
+									}
+									if (ver != 1
+											&& !workAcMsType.equals(recTitle[2]
+													.trim())) { // Ver.2
+										if (status.equals(""))
+											status = STATUS_WARN;
+										detailsWarn
+												.append("<span class=\"warnFont\">value of required item&nbsp;&nbsp;["
+														+ requiredStr
+														+ "],&nbsp;&nbsp;ms type is different from&nbsp;&nbsp;[AC$MASS_SPECTROMETRY: MS_TYPE].</span><br />");
+									}
+								} else {
+									if (status.equals(""))
+										status = STATUS_WARN;
+									detailsWarn
+											.append("<span class=\"warnFont\">value of required item&nbsp;&nbsp;["
+													+ requiredStr
+													+ "]&nbsp;&nbsp;is not record title format.</span><br />");
+	
+									if (!workChName.contains(val)) {
+										detailsWarn
+												.append("<span class=\"warnFont\">value of required item&nbsp;&nbsp;["
+														+ requiredStr
+														+ "],&nbsp;&nbsp;compound name is not included in the&nbsp;&nbsp;[CH$NAME].</span><br />");
+									}
+									if (!workAcInstrumentType
+											.equals(DEFAULT_VALUE)) {
+										detailsWarn
+												.append("<span class=\"warnFont\">value of required item&nbsp;&nbsp;["
+														+ requiredStr
+														+ "],&nbsp;&nbsp;instrument type is different from&nbsp;&nbsp;[AC$INSTRUMENT_TYPE].</span><br />");
+									}
+									if (ver != 1
+											&& !workAcMsType
+													.equals(DEFAULT_VALUE)) { // Ver.2
+										detailsWarn
+												.append("<span class=\"warnFont\">value of required item&nbsp;&nbsp;["
+														+ requiredStr
+														+ "],&nbsp;&nbsp;ms type is different from&nbsp;&nbsp;[AC$MASS_SPECTROMETRY: MS_TYPE].</span><br />");
+									}
+								}
+							} else {
+								if (!workAcInstrumentType.equals(DEFAULT_VALUE)) {
+									if (status.equals(""))
+										status = STATUS_WARN;
+									detailsWarn
+											.append("<span class=\"warnFont\">value of required item&nbsp;&nbsp;["
+													+ requiredStr
+													+ "],&nbsp;&nbsp;instrument type is different from&nbsp;&nbsp;[AC$INSTRUMENT_TYPE].</span><br />");
+								}
+								if (ver != 1
+										&& !workAcMsType.equals(DEFAULT_VALUE)) { // Ver.2
+									if (status.equals(""))
+										status = STATUS_WARN;
+									detailsWarn
+											.append("<span class=\"warnFont\">value of required item&nbsp;&nbsp;["
+													+ requiredStr
+													+ "],&nbsp;&nbsp;ms type is different from&nbsp;&nbsp;[AC$MASS_SPECTROMETRY: MS_TYPE].</span><br />");
+								}
+							}
+						}
+						// DATE（Ver.1以降）
+						else if (requiredStr.equals("DATE: ")
+								&& !val.equals(DEFAULT_VALUE)) {
+							val = val.replace(".", "/");
+							val = val.replace("-", "/");
+							try {
+								DateFormat.getDateInstance(DateFormat.SHORT,
+										Locale.JAPAN).parse(val);
+							} catch (ParseException e) {
+								if (status.equals(""))
+									status = STATUS_WARN;
+								detailsWarn
+										.append("<span class=\"warnFont\">value of required item&nbsp;&nbsp;["
+												+ requiredStr
+												+ "]&nbsp;&nbsp;is not date format.</span><br />");
+							}
+						}
+						// CH$COMPOUND_CLASS（Ver.1以降）
+						else if (requiredStr.equals("CH$COMPOUND_CLASS: ")
+								&& !val.equals(DEFAULT_VALUE)) {
+							if (!val.startsWith("Natural Product")
+									&& !val.startsWith("Non-Natural Product")) {
+	
+								if (status.equals(""))
+									status = STATUS_WARN;
+								detailsWarn
+										.append("<span class=\"warnFont\">value of required item&nbsp;&nbsp;["
+												+ requiredStr
+												+ "]&nbsp;&nbsp;is not compound class format.</span><br />");
+							}
+						}
+						// CH$EXACT_MASS（Ver.1以降）
+						else if (requiredStr.equals("CH$EXACT_MASS: ")
+								&& !val.equals(DEFAULT_VALUE)) {
+							try {
+								Double.parseDouble(val);
+							} catch (NumberFormatException e) {
+								if (status.equals(""))
+									status = STATUS_WARN;
+								detailsWarn
+										.append("<span class=\"warnFont\">value of required item&nbsp;&nbsp;["
+												+ requiredStr
+												+ "]&nbsp;&nbsp;is not numeric.</span><br />");
+							}
+						}
+						// AC$INSTRUMENT_TYPE（Ver.1以降）
+						else if (requiredStr.equals("AC$INSTRUMENT_TYPE: ")
+								&& !val.equals(DEFAULT_VALUE)) {
+							if (val.trim().indexOf(" ") != -1) {
+								if (status.equals(""))
+									status = STATUS_WARN;
+								detailsWarn
+										.append("<span class=\"warnFont\">value of required item&nbsp;&nbsp;["
+												+ requiredStr
+												+ "]&nbsp;&nbsp;is space included.</span><br />");
+							}
+							if (val.trim().indexOf(" ") != -1) {
+								if (status.equals(""))
+									status = STATUS_WARN;
+								detailsWarn
+										.append("<span class=\"warnFont\">value of required item&nbsp;&nbsp;["
+												+ requiredStr
+												+ "]&nbsp;&nbsp;is space included.</span><br />");
+							}
+						}
+						// AC$MASS_SPECTROMETRY: MS_TYPE（Ver.2）
+						else if (ver != 1
+								&& requiredStr
+										.equals("AC$MASS_SPECTROMETRY: MS_TYPE ")
+								&& !val.equals(DEFAULT_VALUE)) {
+							boolean isMsType = true;
+							if (val.startsWith("MS")) {
+								val = val.replace("MS", "");
+								if (!val.equals("")) {
+									try {
+										Integer.parseInt(val);
+									} catch (NumberFormatException e) {
+										isMsType = false;
+									}
+								}
+							} else {
+								isMsType = false;
+							}
+							if (!isMsType) {
+								if (status.equals(""))
+									status = STATUS_WARN;
+								detailsWarn
+										.append("<span class=\"warnFont\">value of required item&nbsp;&nbsp;["
+												+ requiredStr
+												+ "]&nbsp;&nbsp;is not \"MSn\".</span><br />");
+							}
+						}
+						// AC$MASS_SPECTROMETRY:
+						// ION_MODE（Ver.2）、AC$ANALYTICAL_CONDITION: MODE（Ver.1）
+						else if ((ver != 1
+								&& requiredStr
+										.equals("AC$MASS_SPECTROMETRY: ION_MODE ") && !val
+									.equals(DEFAULT_VALUE))
+								|| (ver == 1
+										&& requiredStr
+												.equals("AC$ANALYTICAL_CONDITION: MODE ") && !val
+											.equals(DEFAULT_VALUE))) {
+							if (!val.equals("POSITIVE")
+									&& !val.equals("NEGATIVE")) {
+								if (status.equals(""))
+									status = STATUS_WARN;
+								detailsWarn
+										.append("<span class=\"warnFont\">value of required item&nbsp;&nbsp;["
+												+ requiredStr
+												+ "]&nbsp;&nbsp;is not \"POSITIVE\" or \"NEGATIVE\".</span><br />");
+							}
+						}
+						// PK$NUM_PEAK（Ver.1以降）
+						else if (requiredStr.equals("PK$NUM_PEAK: ")
+								&& !val.equals(DEFAULT_VALUE)) {
+							try {
+								peakNum = Integer.parseInt(val);
+							} catch (NumberFormatException e) {
+								status = STATUS_ERR;
+								detailsErr
+										.append("<span class=\"errFont\">value of required item&nbsp;&nbsp;["
+												+ requiredStr
+												+ "]&nbsp;&nbsp;is not numeric.</span><br />");
+							}
+						}
+						// PK$PEAK:（Ver.1以降）
+						else if (requiredStr.equals("PK$PEAK: ")) {
+							if (valStrs.size() == 0
+									|| !valStrs.get(0).startsWith(
+											"m/z int. rel.int.")) {
+								status = STATUS_ERR;
+								detailsErr
+										.append("<span class=\"errFont\">value of required item&nbsp;&nbsp;[PK$PEAK: ]&nbsp;&nbsp;, the first line is not \"PK$PEAK: m/z int. rel.int.\".</span><br />");
+							} else {
+								boolean isNa = false;
+								String peak = "";
+								String mz = "";
+								String intensity = "";
+								boolean mzDuplication = false;
+								boolean mzNotNumeric = false;
+								boolean intensityNotNumeric = false;
+								boolean invalidFormat = false;
+								HashSet<String> mzSet = new HashSet<String>();
+								for (int l = 0; l < valStrs.size(); l++) {
+									peak = valStrs.get(l).trim();
+									// N/A検出
+									if (peak.indexOf(DEFAULT_VALUE) != -1) {
+										isNa = true;
+										break;
+									}
+									if (l == 0) {
+										continue;
+									} // m/z int. rel.int.が格納されている行のため飛ばす
+	
+									if (peak.indexOf(" ") != -1) {
+										mz = peak.split(" ")[0];
+										if (!mzSet.add(mz)) {
+											mzDuplication = true;
+										}
+										try {
+											Double.parseDouble(mz);
+										} catch (NumberFormatException e) {
+											mzNotNumeric = true;
+										}
+										intensity = peak.split(" ")[1];
+										try {
+											Double.parseDouble(intensity);
+										} catch (NumberFormatException e) {
+											intensityNotNumeric = true;
+										}
+									} else {
+										invalidFormat = true;
+									}
+									if (mzDuplication && mzNotNumeric
+											&& intensityNotNumeric
+											&& invalidFormat) {
+										break;
+									}
+								}
+								if (isNa) {// PK$PEAK:がN/Aの場合
+									if (peakNum != -1) { // PK$NUM_PEAK:もN/Aにする
+										if (status.equals(""))
+											status = STATUS_WARN;
+										detailsWarn
+												.append("<span class=\"warnFont\">value of required item&nbsp;&nbsp;[PK$NUM_PEAK: ]&nbsp;&nbsp;is mismatch or \""
+														+ DEFAULT_VALUE
+														+ "\".</span><br />");
+									}
+									if (valStrs.size() - 1 > 0) { // PK$PEAK:にはピーク情報を記述しないようにする
+										if (status.equals(""))
+											status = STATUS_WARN;
+										detailsWarn
+												.append("<span class=\"warnFont\">value of required item&nbsp;&nbsp;[PK$NUM_PEAK: ]&nbsp;&nbsp;is invalid peak information exists.</span><br />");
+									}
+								} else {
+									if (mzDuplication) {
+										status = STATUS_ERR;
+										detailsErr
+												.append("<span class=\"errFont\">mz value of required item&nbsp;&nbsp;["
+														+ requiredStr
+														+ "]&nbsp;&nbsp;is duplication.</span><br />");
+									}
+									if (mzNotNumeric) {
+										status = STATUS_ERR;
+										detailsErr
+												.append("<span class=\"errFont\">mz value of required item&nbsp;&nbsp;["
+														+ requiredStr
+														+ "]&nbsp;&nbsp;is not numeric.</span><br />");
+									}
+									if (intensityNotNumeric) {
+										status = STATUS_ERR;
+										detailsErr
+												.append("<span class=\"errFont\">intensity value of required item&nbsp;&nbsp;["
+														+ requiredStr
+														+ "]&nbsp;&nbsp;is not numeric.</span><br />");
+									}
+									if (invalidFormat) {
+										status = STATUS_ERR;
+										detailsErr
+												.append("<span class=\"errFont\">value of required item&nbsp;&nbsp;["
+														+ requiredStr
+														+ "]&nbsp;&nbsp;is not peak format.</span><br />");
+									}
+									if (peakNum != 0 && valStrs.size() - 1 == 0) { // 値がない場合はN/Aを追加するようにする（PK$NUM_PEAK:が0の場合は記述なしでも可）
+										if (status.equals(""))
+											status = STATUS_WARN;
+										detailsWarn
+												.append("<span class=\"warnFont\">value of required item&nbsp;&nbsp;[PK$PEAK: ]&nbsp;&nbsp;is no value.  at that time, please add \""
+														+ DEFAULT_VALUE
+														+ "\". </span><br />");
+									}
+									if (peakNum != valStrs.size() - 1) {
+										if (status.equals(""))
+											status = STATUS_WARN;
+										detailsWarn
+												.append("<span class=\"warnFont\">value of required item&nbsp;&nbsp;[PK$NUM_PEAK: ]&nbsp;&nbsp;is mismatch or \""
+														+ DEFAULT_VALUE
+														+ "\".</span><br />");
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			String details = detailsErr.toString() + detailsWarn.toString();
+			if (status.equals("")) {
+				status = STATUS_OK;
+				details = " ";
+			}
+			validationMap.put(name, status + "\t" + details);
+		}
+	
+		// ----------------------------------------------------
+		// 登録済みデータ重複チェック処理
+		// ----------------------------------------------------
+		// 登録済みIDリスト生成（DB）
+		HashSet<String> regIdList = new HashSet<String>();
+		String[] sqls = { "SELECT ID FROM SPECTRUM ORDER BY ID",
+				"SELECT ID FROM RECORD ORDER BY ID",
+				"SELECT ID FROM PEAK GROUP BY ID ORDER BY ID",
+				"SELECT ID FROM CH_NAME ID ORDER BY ID",
+				"SELECT ID FROM CH_LINK ID ORDER BY ID",
+				"SELECT ID FROM TREE WHERE ID IS NOT NULL AND ID<>'' ORDER BY ID" };
+		for (int i = 0; i < sqls.length; i++) {
+			String execSql = sqls[i];
+			ResultSet rs = null;
+			try {
+				rs = db.executeQuery(execSql);
+				while (rs.next()) {
+					String idStr = rs.getString("ID");
+					regIdList.add(idStr);
+				}
+			} catch (SQLException e) {
+				Logger.getLogger("global").severe("    sql : " + execSql);
+				e.printStackTrace();
+				op.println(msgErr("database access error."));
+				return new TreeMap<String, String>();
+			} finally {
+				try {
+					if (rs != null) {
+						rs.close();
+					}
+				} catch (SQLException e) {
+				}
+			}
+		}
+		// 登録済みIDリスト生成（レコードファイル）
+		final String[] recFileList = (new File(registPath)).list();
+		for (int i = 0; i < recFileList.length; i++) {
+			String name = recFileList[i];
+			File file = new File(registPath + File.separator + name);
+			if (!file.isFile() || file.isHidden()
+					|| name.lastIndexOf(REC_EXTENSION) == -1) {
+				continue;
+			}
+			String idStr = name.replace(REC_EXTENSION, "");
+			regIdList.add(idStr);
+		}
+	
+		// 登録済みチェック
+		for (Map.Entry<String, String> e : validationMap.entrySet()) {
+			String statusStr = e.getValue().split("\t")[0];
+			if (statusStr.equals(STATUS_ERR)) {
+				continue;
+			}
+			String nameStr = e.getKey();
+			String idStr = e.getKey().replace(REC_EXTENSION, "");
+			String detailsStr = e.getValue().split("\t")[1];
+			if (regIdList.contains(idStr)) {
+				statusStr = STATUS_WARN;
+				detailsStr += "<span class=\"warnFont\">id&nbsp;&nbsp;["
+						+ idStr + "]&nbsp;&nbsp;of file name&nbsp;&nbsp;["
+						+ nameStr
+						+ "]&nbsp;&nbsp;already registered.</span><br />";
+				validationMap.put(nameStr, statusStr + "\t" + detailsStr);
+			}
+		}
+	
+		return validationMap;
 	}
 
 }
