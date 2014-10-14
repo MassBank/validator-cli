@@ -1,5 +1,5 @@
-NIST to MassBank converter
-==========================
+MassBank record validator
+=========================
 
 It is required to install the included files into your local maven repository upfront:
 ```
@@ -7,7 +7,7 @@ mvn install:install-file -Dfile=./lib/massbank.jar -DgroupId=massbank  -Dartifac
 mvn install:install-file -Dfile=./lib/massbank-admin.jar -DgroupId=massbank  -DartifactId=massbank-admin -Dversion=1.0 -Dpackaging=jar
 ```
 
-Then compile the converter with
+Then compile the validator with
 
 ```
 mvn clean package
