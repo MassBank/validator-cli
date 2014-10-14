@@ -64,13 +64,13 @@ public class RecordValidator {
 	private final static String DEFAULT_VALUE = "N/A";
 
 	/** ステータス（OK） */
-	private final static String STATUS_OK = "<span class=\"msgFont\">ok</span>";
+	private final static String STATUS_OK = "ok";
 
 	/** ステータス（警告） */
-	private final static String STATUS_WARN = "<span class=\"warnFont\">warn</span>";
+	private final static String STATUS_WARN = "warn";
 
 	/** ステータス（エラー） */
-	private final static String STATUS_ERR = "<span class=\"errFont\">error</span>";
+	private final static String STATUS_ERR = "error";
 
 	/**
 	 * HTML表示用メッセージテンプレート（情報）
@@ -96,7 +96,7 @@ public class RecordValidator {
 	 */
 	private static String msgWarn(String msg) {
 		StringBuilder sb = new StringBuilder(
-				"<i>warn</i> : <span class=\"warnFont\">");
+				"<i>warn</i> : ");
 		sb.append(msg);
 		sb.append("</span><br>");
 		return sb.toString();
@@ -111,7 +111,7 @@ public class RecordValidator {
 	 */
 	private static String msgErr(String msg) {
 		StringBuilder sb = new StringBuilder(
-				"<i>error</i> : <span class=\"errFont\">");
+				"<i>error</i> : ");
 		sb.append(msg);
 		sb.append("</span><br>");
 		return sb.toString();
@@ -179,25 +179,25 @@ public class RecordValidator {
 			if (file.isDirectory()) {
 				// ディレクトリの場合
 				status = STATUS_ERR;
-				detailsErr.append("<span class=\"errFont\">[" + name
-						+ "]&nbsp;&nbsp;is directory.</span><br />");
+				detailsErr.append("[" + name
+						+ "] is directory.");
 				validationMap.put(name, status + "\t" + detailsErr.toString());
 				continue;
 			} else if (file.isHidden()) {
 				// 隠しファイルの場合
 				status = STATUS_ERR;
-				detailsErr.append("<span class=\"errFont\">[" + name
-						+ "]&nbsp;&nbsp;is hidden.</span><br />");
+				detailsErr.append("[" + name
+						+ "] is hidden.");
 				validationMap.put(name, status + "\t" + detailsErr.toString());
 				continue;
 			} else if (name.lastIndexOf(REC_EXTENSION) == -1) {
 				// ファイル拡張子不正の場合
 				status = STATUS_ERR;
 				detailsErr
-						.append("<span class=\"errFont\">file extension of&nbsp;&nbsp;["
+						.append("file extension of ["
 								+ name
-								+ "]&nbsp;&nbsp;is not&nbsp;&nbsp;["
-								+ REC_EXTENSION + "].</span><br />");
+								+ "] is not ["
+								+ REC_EXTENSION + "].");
 				validationMap.put(name, status + "\t" + detailsErr.toString());
 				continue;
 			}
@@ -279,21 +279,21 @@ public class RecordValidator {
 				if (status.equals(""))
 					status = STATUS_WARN;
 				detailsWarn
-						.append("<span class=\"warnFont\">invalid after the end tag&nbsp;&nbsp;[//].</span><br />");
+						.append("invalid after the end tag [//].");
 			}
 			if (isDoubleByte) {
 				// 全角文字が混入している場合
 				if (status.equals(""))
 					status = STATUS_ERR;
 				detailsErr
-						.append("<span class=\"errFont\">double-byte character included.</span><br />");
+						.append("double-byte character included.");
 			}
 			if (ver == 1 && existLicense) {
 				// LICENSEタグが存在する場合（Ver.1）
 				if (status.equals(""))
 					status = STATUS_ERR;
 				detailsErr
-						.append("<span class=\"errFont\">[LICENSE: ]&nbsp;&nbsp;tag can not be used in record format &nbsp;&nbsp;[version 1].</span><br />");
+						.append("[LICENSE: ] tag can not be used in record format  [version 1].");
 			}
 
 			// ----------------------------------------------------
@@ -347,15 +347,14 @@ public class RecordValidator {
 					// 必須項目が見つからない場合
 					status = STATUS_ERR;
 					detailsErr
-							.append("<span class=\"errFont\">no required item&nbsp;&nbsp;["
-									+ requiredStr + "].</span><br />");
+							.append("no required item ["
+									+ requiredStr + "].");
 				} else {
 					if (!findValue) {
 						// 値が存在しない場合
 						status = STATUS_ERR;
 						detailsErr
-								.append("<span class=\"errFont\">no value of required item&nbsp;&nbsp;["
-										+ requiredStr + "].</span><br />");
+								.append("no value of required item [" + requiredStr + "].");
 					} else {
 						// 値が存在する場合
 
@@ -368,16 +367,16 @@ public class RecordValidator {
 							if (!val.equals(name.replace(REC_EXTENSION, ""))) {
 								status = STATUS_ERR;
 								detailsErr
-										.append("<span class=\"errFont\">value of required item&nbsp;&nbsp;["
+										.append("value of required item ["
 												+ requiredStr
-												+ "]&nbsp;&nbsp;not correspond to file name.</span><br />");
+												+ "] not correspond to file name.");
 							}
 							if (val.length() != 8) {
 								status = STATUS_ERR;
 								detailsErr
-										.append("<span class=\"errFont\">value of required item&nbsp;&nbsp;["
+										.append("value of required item ["
 												+ requiredStr
-												+ "]&nbsp;&nbsp;is 8 digits necessary.</span><br />");
+												+ "] is 8 digits necessary.");
 							}
 						}
 						// RECORD_TITLE（Ver.1以降）
@@ -390,18 +389,18 @@ public class RecordValidator {
 										if (status.equals(""))
 											status = STATUS_WARN;
 										detailsWarn
-												.append("<span class=\"warnFont\">value of required item&nbsp;&nbsp;["
+												.append("value of required item ["
 														+ requiredStr
-														+ "],&nbsp;&nbsp;compound name is not included in the&nbsp;&nbsp;[CH$NAME].</span><br />");
+														+ "], compound name is not included in the [CH$NAME].");
 									}
 									if (!workAcInstrumentType
 											.equals(recTitle[1].trim())) {
 										if (status.equals(""))
 											status = STATUS_WARN;
 										detailsWarn
-												.append("<span class=\"warnFont\">value of required item&nbsp;&nbsp;["
+												.append("value of required item ["
 														+ requiredStr
-														+ "],&nbsp;&nbsp;instrument type is different from&nbsp;&nbsp;[AC$INSTRUMENT_TYPE].</span><br />");
+														+ "], instrument type is different from [AC$INSTRUMENT_TYPE].");
 									}
 									if (ver != 1
 											&& !workAcMsType.equals(recTitle[2]
@@ -409,38 +408,38 @@ public class RecordValidator {
 										if (status.equals(""))
 											status = STATUS_WARN;
 										detailsWarn
-												.append("<span class=\"warnFont\">value of required item&nbsp;&nbsp;["
+												.append("value of required item ["
 														+ requiredStr
-														+ "],&nbsp;&nbsp;ms type is different from&nbsp;&nbsp;[AC$MASS_SPECTROMETRY: MS_TYPE].</span><br />");
+														+ "], ms type is different from [AC$MASS_SPECTROMETRY: MS_TYPE].");
 									}
 								} else {
 									if (status.equals(""))
 										status = STATUS_WARN;
 									detailsWarn
-											.append("<span class=\"warnFont\">value of required item&nbsp;&nbsp;["
+											.append("value of required item ["
 													+ requiredStr
-													+ "]&nbsp;&nbsp;is not record title format.</span><br />");
+													+ "] is not record title format.");
 
 									if (!workChName.contains(val)) {
 										detailsWarn
-												.append("<span class=\"warnFont\">value of required item&nbsp;&nbsp;["
+												.append("value of required item ["
 														+ requiredStr
-														+ "],&nbsp;&nbsp;compound name is not included in the&nbsp;&nbsp;[CH$NAME].</span><br />");
+														+ "], compound name is not included in the [CH$NAME].");
 									}
 									if (!workAcInstrumentType
 											.equals(DEFAULT_VALUE)) {
 										detailsWarn
-												.append("<span class=\"warnFont\">value of required item&nbsp;&nbsp;["
+												.append("value of required item ["
 														+ requiredStr
-														+ "],&nbsp;&nbsp;instrument type is different from&nbsp;&nbsp;[AC$INSTRUMENT_TYPE].</span><br />");
+														+ "], instrument type is different from [AC$INSTRUMENT_TYPE].");
 									}
 									if (ver != 1
 											&& !workAcMsType
 													.equals(DEFAULT_VALUE)) { // Ver.2
 										detailsWarn
-												.append("<span class=\"warnFont\">value of required item&nbsp;&nbsp;["
+												.append("value of required item ["
 														+ requiredStr
-														+ "],&nbsp;&nbsp;ms type is different from&nbsp;&nbsp;[AC$MASS_SPECTROMETRY: MS_TYPE].</span><br />");
+														+ "], ms type is different from [AC$MASS_SPECTROMETRY: MS_TYPE].");
 									}
 								}
 							} else {
@@ -448,18 +447,18 @@ public class RecordValidator {
 									if (status.equals(""))
 										status = STATUS_WARN;
 									detailsWarn
-											.append("<span class=\"warnFont\">value of required item&nbsp;&nbsp;["
+											.append("value of required item ["
 													+ requiredStr
-													+ "],&nbsp;&nbsp;instrument type is different from&nbsp;&nbsp;[AC$INSTRUMENT_TYPE].</span><br />");
+													+ "], instrument type is different from [AC$INSTRUMENT_TYPE].");
 								}
 								if (ver != 1
 										&& !workAcMsType.equals(DEFAULT_VALUE)) { // Ver.2
 									if (status.equals(""))
 										status = STATUS_WARN;
 									detailsWarn
-											.append("<span class=\"warnFont\">value of required item&nbsp;&nbsp;["
+											.append("value of required item ["
 													+ requiredStr
-													+ "],&nbsp;&nbsp;ms type is different from&nbsp;&nbsp;[AC$MASS_SPECTROMETRY: MS_TYPE].</span><br />");
+													+ "], ms type is different from [AC$MASS_SPECTROMETRY: MS_TYPE].");
 								}
 							}
 						}
@@ -475,9 +474,9 @@ public class RecordValidator {
 								if (status.equals(""))
 									status = STATUS_WARN;
 								detailsWarn
-										.append("<span class=\"warnFont\">value of required item&nbsp;&nbsp;["
+										.append("value of required item ["
 												+ requiredStr
-												+ "]&nbsp;&nbsp;is not date format.</span><br />");
+												+ "] is not date format.");
 							}
 						}
 						// CH$COMPOUND_CLASS（Ver.1以降）
@@ -489,9 +488,9 @@ public class RecordValidator {
 								if (status.equals(""))
 									status = STATUS_WARN;
 								detailsWarn
-										.append("<span class=\"warnFont\">value of required item&nbsp;&nbsp;["
+										.append("value of required item ["
 												+ requiredStr
-												+ "]&nbsp;&nbsp;is not compound class format.</span><br />");
+												+ "] is not compound class format.");
 							}
 						}
 						// CH$EXACT_MASS（Ver.1以降）
@@ -503,9 +502,9 @@ public class RecordValidator {
 								if (status.equals(""))
 									status = STATUS_WARN;
 								detailsWarn
-										.append("<span class=\"warnFont\">value of required item&nbsp;&nbsp;["
+										.append("value of required item ["
 												+ requiredStr
-												+ "]&nbsp;&nbsp;is not numeric.</span><br />");
+												+ "] is not numeric.");
 							}
 						}
 						// AC$INSTRUMENT_TYPE（Ver.1以降）
@@ -515,17 +514,17 @@ public class RecordValidator {
 								if (status.equals(""))
 									status = STATUS_WARN;
 								detailsWarn
-										.append("<span class=\"warnFont\">value of required item&nbsp;&nbsp;["
+										.append("value of required item ["
 												+ requiredStr
-												+ "]&nbsp;&nbsp;is space included.</span><br />");
+												+ "] is space included.");
 							}
 							if (val.trim().indexOf(" ") != -1) {
 								if (status.equals(""))
 									status = STATUS_WARN;
 								detailsWarn
-										.append("<span class=\"warnFont\">value of required item&nbsp;&nbsp;["
+										.append("value of required item ["
 												+ requiredStr
-												+ "]&nbsp;&nbsp;is space included.</span><br />");
+												+ "] is space included.");
 							}
 						}
 						// AC$MASS_SPECTROMETRY: MS_TYPE（Ver.2）
@@ -550,9 +549,9 @@ public class RecordValidator {
 								if (status.equals(""))
 									status = STATUS_WARN;
 								detailsWarn
-										.append("<span class=\"warnFont\">value of required item&nbsp;&nbsp;["
+										.append("value of required item ["
 												+ requiredStr
-												+ "]&nbsp;&nbsp;is not \"MSn\".</span><br />");
+												+ "] is not \"MSn\".");
 							}
 						}
 						// AC$MASS_SPECTROMETRY:
@@ -570,9 +569,9 @@ public class RecordValidator {
 								if (status.equals(""))
 									status = STATUS_WARN;
 								detailsWarn
-										.append("<span class=\"warnFont\">value of required item&nbsp;&nbsp;["
+										.append("value of required item ["
 												+ requiredStr
-												+ "]&nbsp;&nbsp;is not \"POSITIVE\" or \"NEGATIVE\".</span><br />");
+												+ "] is not \"POSITIVE\" or \"NEGATIVE\".");
 							}
 						}
 						// PK$NUM_PEAK（Ver.1以降）
@@ -583,9 +582,9 @@ public class RecordValidator {
 							} catch (NumberFormatException e) {
 								status = STATUS_ERR;
 								detailsErr
-										.append("<span class=\"errFont\">value of required item&nbsp;&nbsp;["
+										.append("value of required item ["
 												+ requiredStr
-												+ "]&nbsp;&nbsp;is not numeric.</span><br />");
+												+ "] is not numeric.");
 							}
 						}
 						// PK$PEAK:（Ver.1以降）
@@ -595,7 +594,7 @@ public class RecordValidator {
 											"m/z int. rel.int.")) {
 								status = STATUS_ERR;
 								detailsErr
-										.append("<span class=\"errFont\">value of required item&nbsp;&nbsp;[PK$PEAK: ]&nbsp;&nbsp;, the first line is not \"PK$PEAK: m/z int. rel.int.\".</span><br />");
+										.append("value of required item [PK$PEAK: ] , the first line is not \"PK$PEAK: m/z int. rel.int.\".");
 							} else {
 								boolean isNa = false;
 								String peak = "";
@@ -647,60 +646,60 @@ public class RecordValidator {
 										if (status.equals(""))
 											status = STATUS_WARN;
 										detailsWarn
-												.append("<span class=\"warnFont\">value of required item&nbsp;&nbsp;[PK$NUM_PEAK: ]&nbsp;&nbsp;is mismatch or \""
+												.append("value of required item [PK$NUM_PEAK: ] is mismatch or \""
 														+ DEFAULT_VALUE
-														+ "\".</span><br />");
+														+ "\".");
 									}
 									if (valStrs.size() - 1 > 0) { // PK$PEAK:にはピーク情報を記述しないようにする
 										if (status.equals(""))
 											status = STATUS_WARN;
 										detailsWarn
-												.append("<span class=\"warnFont\">value of required item&nbsp;&nbsp;[PK$NUM_PEAK: ]&nbsp;&nbsp;is invalid peak information exists.</span><br />");
+												.append("value of required item [PK$NUM_PEAK: ] is invalid peak information exists.");
 									}
 								} else {
 									if (mzDuplication) {
 										status = STATUS_ERR;
 										detailsErr
-												.append("<span class=\"errFont\">mz value of required item&nbsp;&nbsp;["
+												.append("mz value of required item ["
 														+ requiredStr
-														+ "]&nbsp;&nbsp;is duplication.</span><br />");
+														+ "] is duplication.");
 									}
 									if (mzNotNumeric) {
 										status = STATUS_ERR;
 										detailsErr
-												.append("<span class=\"errFont\">mz value of required item&nbsp;&nbsp;["
+												.append("mz value of required item ["
 														+ requiredStr
-														+ "]&nbsp;&nbsp;is not numeric.</span><br />");
+														+ "] is not numeric.");
 									}
 									if (intensityNotNumeric) {
 										status = STATUS_ERR;
 										detailsErr
-												.append("<span class=\"errFont\">intensity value of required item&nbsp;&nbsp;["
+												.append("intensity value of required item ["
 														+ requiredStr
-														+ "]&nbsp;&nbsp;is not numeric.</span><br />");
+														+ "] is not numeric.");
 									}
 									if (invalidFormat) {
 										status = STATUS_ERR;
 										detailsErr
-												.append("<span class=\"errFont\">value of required item&nbsp;&nbsp;["
+												.append("value of required item ["
 														+ requiredStr
-														+ "]&nbsp;&nbsp;is not peak format.</span><br />");
+														+ "] is not peak format.");
 									}
 									if (peakNum != 0 && valStrs.size() - 1 == 0) { // 値がない場合はN/Aを追加するようにする（PK$NUM_PEAK:が0の場合は記述なしでも可）
 										if (status.equals(""))
 											status = STATUS_WARN;
 										detailsWarn
-												.append("<span class=\"warnFont\">value of required item&nbsp;&nbsp;[PK$PEAK: ]&nbsp;&nbsp;is no value.  at that time, please add \""
+												.append("value of required item [PK$PEAK: ] is no value.  at that time, please add \""
 														+ DEFAULT_VALUE
-														+ "\". </span><br />");
+														+ "\". ");
 									}
 									if (peakNum != valStrs.size() - 1) {
 										if (status.equals(""))
 											status = STATUS_WARN;
 										detailsWarn
-												.append("<span class=\"warnFont\">value of required item&nbsp;&nbsp;[PK$NUM_PEAK: ]&nbsp;&nbsp;is mismatch or \""
+												.append("value of required item [PK$NUM_PEAK: ] is mismatch or \""
 														+ DEFAULT_VALUE
-														+ "\".</span><br />");
+														+ "\".");
 									}
 								}
 							}
@@ -774,10 +773,10 @@ public class RecordValidator {
 //			String detailsStr = e.getValue().split("\t")[1];
 //			if (regIdList.contains(idStr)) {
 //				statusStr = STATUS_WARN;
-//				detailsStr += "<span class=\"warnFont\">id&nbsp;&nbsp;["
-//						+ idStr + "]&nbsp;&nbsp;of file name&nbsp;&nbsp;["
+//				detailsStr += "id ["
+//						+ idStr + "] of file name ["
 //						+ nameStr
-//						+ "]&nbsp;&nbsp;already registered.</span><br />";
+//						+ "] already registered.";
 //				validationMap.put(nameStr, statusStr + "\t" + detailsStr);
 //			}
 //		}
@@ -815,22 +814,15 @@ public class RecordValidator {
 				errCnt++;
 			}
 		}
-		op.println("\t<br />");
-		op.println("\t<div class=\"count baseFont\">");
-		op.println("\t\t<span class=\"msgFont\">" + nf.format(okCnt)
-				+ " ok</span>&nbsp;,&nbsp;");
-		op.println("\t\t<span class=\"warnFont\">" + nf.format(warnCnt)
-				+ " warn</span>&nbsp;,&nbsp;");
-		op.println("\t\t<span class=\"errFont\">" + nf.format(errCnt)
-				+ " error</span> / " + nf.format(resultMap.size())
-				+ " files&nbsp;");
-		op.println("\t</div>");
-		op.println("\t<table width=\"980\" cellspacing=\"1\" cellpadding=\"0\" bgcolor=\"Lavender\">");
-		op.println("\t\t<tr class=\"rowHeader\">");
-		op.println("\t\t\t<td width=\"140\">Name</td>");
-		op.println("\t\t\t<td width=\"70\">Status</td>");
-		op.println("\t\t\t<td>Details</td>");
-		op.println("\t\t</tr>");
+		op.println(nf.format(okCnt)
+				+ " ok");
+		op.println(nf.format(warnCnt)
+				+ " warn");
+		op.println(nf.format(errCnt)
+				+ " error / " + nf.format(resultMap.size())
+				+ " files");
+		op.println("Status");
+		op.println("Details");
 
 		// ----------------------------------------------------
 		// 一覧表示部
@@ -839,14 +831,10 @@ public class RecordValidator {
 			String nameStr = e.getKey();
 			String statusStr = e.getValue().split("\t")[0];
 			String detailsStr = e.getValue().split("\t")[1].trim();
-			op.println("\t\t<tr class=\"rowEnable\">");
-			op.println("\t\t\t<td class=\"leftIndent\" height=\"24\">"
-					+ nameStr + "</td>");
-			op.println("\t\t\t<td align=\"center\">" + statusStr + "</td>");
-			op.println("\t\t\t<td class=\"details\">" + detailsStr + "</td>");
-			op.println("\t\t</tr>");
+			op.println( nameStr + " ");
+			op.println( statusStr + "");
+			op.println( detailsStr + "");
 		}
-		op.println("\t</table>");
 
 		return true;
 	}
@@ -914,7 +902,7 @@ public class RecordValidator {
 			// isResult = FileUtil.changeMode("777", tmpPath);
 			// if (!isResult) {
 			// out.println(msgErr("[" + tmpPath
-			// + "]&nbsp;&nbsp; chmod failed."));
+			// + "]  chmod failed."));
 			// return;
 			// }
 			// }
@@ -944,7 +932,7 @@ public class RecordValidator {
 			}
 			if (dbDirs == null || dbNames.size() == 0) {
 				out.println(msgErr("[" + dbRootPath
-						+ "]&nbsp;&nbsp;directory not exist."));
+						+ "] directory not exist."));
 				return;
 			}
 			Collections.sort(dbNames);
@@ -1021,13 +1009,13 @@ public class RecordValidator {
 //					isResult = false;
 //				} else if (!upResult) {
 //					out.println(msgErr("[" + upFileName
-//							+ "]&nbsp;&nbsp;upload failed."));
+//							+ "] upload failed."));
 //					isResult = false;
 //				} else if (!upFileName.endsWith(ZIP_EXTENSION)
 //						&& !upFileName.endsWith(MSBK_EXTENSION)) {
-//					out.println(msgErr("please select&nbsp;&nbsp;["
+//					out.println(msgErr("please select ["
 //							+ UPLOAD_RECDATA_ZIP
-//							+ "]&nbsp;&nbsp;or&nbsp;&nbsp;["
+//							+ "] or ["
 //							+ UPLOAD_RECDATA_MSBK + "]."));
 //					up.deleteFile(upFileName);
 //					isResult = false;
@@ -1050,7 +1038,7 @@ public class RecordValidator {
 //			if (!isResult) {
 //				out.println(msgErr("["
 //						+ upFileName
-//						+ "]&nbsp;&nbsp; extraction failed. possibility of time-out."));
+//						+ "]  extraction failed. possibility of time-out."));
 //				return;
 //			}
 
@@ -1076,7 +1064,7 @@ public class RecordValidator {
 //				if (upFileName.endsWith(ZIP_EXTENSION)) {
 //					out.println(msgErr("["
 //							+ RECDATA_DIR_NAME
-//							+ "]&nbsp;&nbsp; directory is not included in the up-loading file."));
+//							+ "]  directory is not included in the up-loading file."));
 //				} else if (upFileName.endsWith(MSBK_EXTENSION)) {
 //					out.println(msgErr("The uploaded file is not record data."));
 //				}
@@ -1118,8 +1106,6 @@ public class RecordValidator {
 			if (tmpDir.exists()) {
 				FileUtil.removeDir(tmpDir.getPath());
 			}
-			out.println("</body>");
-			out.println("</html>");
 		}
 
 	}
@@ -1145,11 +1131,11 @@ public class RecordValidator {
 			PrintStream op, String dataPath, String registPath, int ver)
 			throws IOException {
 	
-		op.println(msgInfo("validation archive is&nbsp;&nbsp;["
-				+ UPLOAD_RECDATA_ZIP + "]&nbsp;&nbsp;or&nbsp;&nbsp;["
+		op.println(msgInfo("validation archive is ["
+				+ UPLOAD_RECDATA_ZIP + "] or ["
 				+ UPLOAD_RECDATA_MSBK + "]."));
 		if (ver == 1) {
-			op.println(msgInfo("check record format version is&nbsp;&nbsp;[version 1]."));
+			op.println(msgInfo("check record format version is [version 1]."));
 		}
 	
 		final String[] dataList = (new File(dataPath)).list();
@@ -1189,25 +1175,25 @@ public class RecordValidator {
 			if (file.isDirectory()) {
 				// ディレクトリの場合
 				status = STATUS_ERR;
-				detailsErr.append("<span class=\"errFont\">[" + name
-						+ "]&nbsp;&nbsp;is directory.</span><br />");
+				detailsErr.append("[" + name
+						+ "] is directory.");
 				validationMap.put(name, status + "\t" + detailsErr.toString());
 				continue;
 			} else if (file.isHidden()) {
 				// 隠しファイルの場合
 				status = STATUS_ERR;
-				detailsErr.append("<span class=\"errFont\">[" + name
-						+ "]&nbsp;&nbsp;is hidden.</span><br />");
+				detailsErr.append("[" + name
+						+ "] is hidden.");
 				validationMap.put(name, status + "\t" + detailsErr.toString());
 				continue;
 			} else if (name.lastIndexOf(REC_EXTENSION) == -1) {
 				// ファイル拡張子不正の場合
 				status = STATUS_ERR;
 				detailsErr
-						.append("<span class=\"errFont\">file extension of&nbsp;&nbsp;["
+						.append("file extension of ["
 								+ name
-								+ "]&nbsp;&nbsp;is not&nbsp;&nbsp;["
-								+ REC_EXTENSION + "].</span><br />");
+								+ "] is not ["
+								+ REC_EXTENSION + "].");
 				validationMap.put(name, status + "\t" + detailsErr.toString());
 				continue;
 			}
@@ -1289,21 +1275,21 @@ public class RecordValidator {
 				if (status.equals(""))
 					status = STATUS_WARN;
 				detailsWarn
-						.append("<span class=\"warnFont\">invalid after the end tag&nbsp;&nbsp;[//].</span><br />");
+						.append("invalid after the end tag [//].");
 			}
 			if (isDoubleByte) {
 				// 全角文字が混入している場合
 				if (status.equals(""))
 					status = STATUS_ERR;
 				detailsErr
-						.append("<span class=\"errFont\">double-byte character included.</span><br />");
+						.append("double-byte character included.");
 			}
 			if (ver == 1 && existLicense) {
 				// LICENSEタグが存在する場合（Ver.1）
 				if (status.equals(""))
 					status = STATUS_ERR;
 				detailsErr
-						.append("<span class=\"errFont\">[LICENSE: ]&nbsp;&nbsp;tag can not be used in record format &nbsp;&nbsp;[version 1].</span><br />");
+						.append("[LICENSE: ] tag can not be used in record format  [version 1].");
 			}
 	
 			// ----------------------------------------------------
@@ -1357,15 +1343,15 @@ public class RecordValidator {
 					// 必須項目が見つからない場合
 					status = STATUS_ERR;
 					detailsErr
-							.append("<span class=\"errFont\">no required item&nbsp;&nbsp;["
-									+ requiredStr + "].</span><br />");
+							.append("no required item ["
+									+ requiredStr + "].");
 				} else {
 					if (!findValue) {
 						// 値が存在しない場合
 						status = STATUS_ERR;
 						detailsErr
-								.append("<span class=\"errFont\">no value of required item&nbsp;&nbsp;["
-										+ requiredStr + "].</span><br />");
+								.append("no value of required item ["
+										+ requiredStr + "].");
 					} else {
 						// 値が存在する場合
 	
@@ -1378,16 +1364,16 @@ public class RecordValidator {
 							if (!val.equals(name.replace(REC_EXTENSION, ""))) {
 								status = STATUS_ERR;
 								detailsErr
-										.append("<span class=\"errFont\">value of required item&nbsp;&nbsp;["
+										.append("value of required item ["
 												+ requiredStr
-												+ "]&nbsp;&nbsp;not correspond to file name.</span><br />");
+												+ "] not correspond to file name.");
 							}
 							if (val.length() != 8) {
 								status = STATUS_ERR;
 								detailsErr
-										.append("<span class=\"errFont\">value of required item&nbsp;&nbsp;["
+										.append("value of required item ["
 												+ requiredStr
-												+ "]&nbsp;&nbsp;is 8 digits necessary.</span><br />");
+												+ "] is 8 digits necessary.");
 							}
 						}
 						// RECORD_TITLE（Ver.1以降）
@@ -1400,18 +1386,18 @@ public class RecordValidator {
 										if (status.equals(""))
 											status = STATUS_WARN;
 										detailsWarn
-												.append("<span class=\"warnFont\">value of required item&nbsp;&nbsp;["
+												.append("value of required item ["
 														+ requiredStr
-														+ "],&nbsp;&nbsp;compound name is not included in the&nbsp;&nbsp;[CH$NAME].</span><br />");
+														+ "], compound name is not included in the [CH$NAME].");
 									}
 									if (!workAcInstrumentType
 											.equals(recTitle[1].trim())) {
 										if (status.equals(""))
 											status = STATUS_WARN;
 										detailsWarn
-												.append("<span class=\"warnFont\">value of required item&nbsp;&nbsp;["
+												.append("value of required item ["
 														+ requiredStr
-														+ "],&nbsp;&nbsp;instrument type is different from&nbsp;&nbsp;[AC$INSTRUMENT_TYPE].</span><br />");
+														+ "], instrument type is different from [AC$INSTRUMENT_TYPE].");
 									}
 									if (ver != 1
 											&& !workAcMsType.equals(recTitle[2]
@@ -1419,38 +1405,38 @@ public class RecordValidator {
 										if (status.equals(""))
 											status = STATUS_WARN;
 										detailsWarn
-												.append("<span class=\"warnFont\">value of required item&nbsp;&nbsp;["
+												.append("value of required item ["
 														+ requiredStr
-														+ "],&nbsp;&nbsp;ms type is different from&nbsp;&nbsp;[AC$MASS_SPECTROMETRY: MS_TYPE].</span><br />");
+														+ "], ms type is different from [AC$MASS_SPECTROMETRY: MS_TYPE].");
 									}
 								} else {
 									if (status.equals(""))
 										status = STATUS_WARN;
 									detailsWarn
-											.append("<span class=\"warnFont\">value of required item&nbsp;&nbsp;["
+											.append("value of required item ["
 													+ requiredStr
-													+ "]&nbsp;&nbsp;is not record title format.</span><br />");
+													+ "] is not record title format.");
 	
 									if (!workChName.contains(val)) {
 										detailsWarn
-												.append("<span class=\"warnFont\">value of required item&nbsp;&nbsp;["
+												.append("value of required item ["
 														+ requiredStr
-														+ "],&nbsp;&nbsp;compound name is not included in the&nbsp;&nbsp;[CH$NAME].</span><br />");
+														+ "], compound name is not included in the [CH$NAME].");
 									}
 									if (!workAcInstrumentType
 											.equals(DEFAULT_VALUE)) {
 										detailsWarn
-												.append("<span class=\"warnFont\">value of required item&nbsp;&nbsp;["
+												.append("value of required item ["
 														+ requiredStr
-														+ "],&nbsp;&nbsp;instrument type is different from&nbsp;&nbsp;[AC$INSTRUMENT_TYPE].</span><br />");
+														+ "], instrument type is different from [AC$INSTRUMENT_TYPE].");
 									}
 									if (ver != 1
 											&& !workAcMsType
 													.equals(DEFAULT_VALUE)) { // Ver.2
 										detailsWarn
-												.append("<span class=\"warnFont\">value of required item&nbsp;&nbsp;["
+												.append("value of required item ["
 														+ requiredStr
-														+ "],&nbsp;&nbsp;ms type is different from&nbsp;&nbsp;[AC$MASS_SPECTROMETRY: MS_TYPE].</span><br />");
+														+ "], ms type is different from [AC$MASS_SPECTROMETRY: MS_TYPE].");
 									}
 								}
 							} else {
@@ -1458,18 +1444,18 @@ public class RecordValidator {
 									if (status.equals(""))
 										status = STATUS_WARN;
 									detailsWarn
-											.append("<span class=\"warnFont\">value of required item&nbsp;&nbsp;["
+											.append("value of required item ["
 													+ requiredStr
-													+ "],&nbsp;&nbsp;instrument type is different from&nbsp;&nbsp;[AC$INSTRUMENT_TYPE].</span><br />");
+													+ "], instrument type is different from [AC$INSTRUMENT_TYPE].");
 								}
 								if (ver != 1
 										&& !workAcMsType.equals(DEFAULT_VALUE)) { // Ver.2
 									if (status.equals(""))
 										status = STATUS_WARN;
 									detailsWarn
-											.append("<span class=\"warnFont\">value of required item&nbsp;&nbsp;["
+											.append("value of required item ["
 													+ requiredStr
-													+ "],&nbsp;&nbsp;ms type is different from&nbsp;&nbsp;[AC$MASS_SPECTROMETRY: MS_TYPE].</span><br />");
+													+ "], ms type is different from [AC$MASS_SPECTROMETRY: MS_TYPE].");
 								}
 							}
 						}
@@ -1485,9 +1471,9 @@ public class RecordValidator {
 								if (status.equals(""))
 									status = STATUS_WARN;
 								detailsWarn
-										.append("<span class=\"warnFont\">value of required item&nbsp;&nbsp;["
+										.append("value of required item ["
 												+ requiredStr
-												+ "]&nbsp;&nbsp;is not date format.</span><br />");
+												+ "] is not date format.");
 							}
 						}
 						// CH$COMPOUND_CLASS（Ver.1以降）
@@ -1499,9 +1485,9 @@ public class RecordValidator {
 								if (status.equals(""))
 									status = STATUS_WARN;
 								detailsWarn
-										.append("<span class=\"warnFont\">value of required item&nbsp;&nbsp;["
+										.append("value of required item ["
 												+ requiredStr
-												+ "]&nbsp;&nbsp;is not compound class format.</span><br />");
+												+ "] is not compound class format.");
 							}
 						}
 						// CH$EXACT_MASS（Ver.1以降）
@@ -1513,9 +1499,9 @@ public class RecordValidator {
 								if (status.equals(""))
 									status = STATUS_WARN;
 								detailsWarn
-										.append("<span class=\"warnFont\">value of required item&nbsp;&nbsp;["
+										.append("value of required item ["
 												+ requiredStr
-												+ "]&nbsp;&nbsp;is not numeric.</span><br />");
+												+ "] is not numeric.");
 							}
 						}
 						// AC$INSTRUMENT_TYPE（Ver.1以降）
@@ -1525,17 +1511,17 @@ public class RecordValidator {
 								if (status.equals(""))
 									status = STATUS_WARN;
 								detailsWarn
-										.append("<span class=\"warnFont\">value of required item&nbsp;&nbsp;["
+										.append("value of required item ["
 												+ requiredStr
-												+ "]&nbsp;&nbsp;is space included.</span><br />");
+												+ "] is space included.");
 							}
 							if (val.trim().indexOf(" ") != -1) {
 								if (status.equals(""))
 									status = STATUS_WARN;
 								detailsWarn
-										.append("<span class=\"warnFont\">value of required item&nbsp;&nbsp;["
+										.append("value of required item ["
 												+ requiredStr
-												+ "]&nbsp;&nbsp;is space included.</span><br />");
+												+ "] is space included.");
 							}
 						}
 						// AC$MASS_SPECTROMETRY: MS_TYPE（Ver.2）
@@ -1560,9 +1546,9 @@ public class RecordValidator {
 								if (status.equals(""))
 									status = STATUS_WARN;
 								detailsWarn
-										.append("<span class=\"warnFont\">value of required item&nbsp;&nbsp;["
+										.append("value of required item ["
 												+ requiredStr
-												+ "]&nbsp;&nbsp;is not \"MSn\".</span><br />");
+												+ "] is not \"MSn\".");
 							}
 						}
 						// AC$MASS_SPECTROMETRY:
@@ -1580,9 +1566,9 @@ public class RecordValidator {
 								if (status.equals(""))
 									status = STATUS_WARN;
 								detailsWarn
-										.append("<span class=\"warnFont\">value of required item&nbsp;&nbsp;["
+										.append("value of required item ["
 												+ requiredStr
-												+ "]&nbsp;&nbsp;is not \"POSITIVE\" or \"NEGATIVE\".</span><br />");
+												+ "] is not \"POSITIVE\" or \"NEGATIVE\".");
 							}
 						}
 						// PK$NUM_PEAK（Ver.1以降）
@@ -1593,9 +1579,9 @@ public class RecordValidator {
 							} catch (NumberFormatException e) {
 								status = STATUS_ERR;
 								detailsErr
-										.append("<span class=\"errFont\">value of required item&nbsp;&nbsp;["
+										.append("value of required item ["
 												+ requiredStr
-												+ "]&nbsp;&nbsp;is not numeric.</span><br />");
+												+ "] is not numeric.");
 							}
 						}
 						// PK$PEAK:（Ver.1以降）
@@ -1605,7 +1591,7 @@ public class RecordValidator {
 											"m/z int. rel.int.")) {
 								status = STATUS_ERR;
 								detailsErr
-										.append("<span class=\"errFont\">value of required item&nbsp;&nbsp;[PK$PEAK: ]&nbsp;&nbsp;, the first line is not \"PK$PEAK: m/z int. rel.int.\".</span><br />");
+										.append("value of required item [PK$PEAK: ] , the first line is not \"PK$PEAK: m/z int. rel.int.\".");
 							} else {
 								boolean isNa = false;
 								String peak = "";
@@ -1657,60 +1643,60 @@ public class RecordValidator {
 										if (status.equals(""))
 											status = STATUS_WARN;
 										detailsWarn
-												.append("<span class=\"warnFont\">value of required item&nbsp;&nbsp;[PK$NUM_PEAK: ]&nbsp;&nbsp;is mismatch or \""
+												.append("value of required item [PK$NUM_PEAK: ] is mismatch or \""
 														+ DEFAULT_VALUE
-														+ "\".</span><br />");
+														+ "\".");
 									}
 									if (valStrs.size() - 1 > 0) { // PK$PEAK:にはピーク情報を記述しないようにする
 										if (status.equals(""))
 											status = STATUS_WARN;
 										detailsWarn
-												.append("<span class=\"warnFont\">value of required item&nbsp;&nbsp;[PK$NUM_PEAK: ]&nbsp;&nbsp;is invalid peak information exists.</span><br />");
+												.append("value of required item [PK$NUM_PEAK: ] is invalid peak information exists.");
 									}
 								} else {
 									if (mzDuplication) {
 										status = STATUS_ERR;
 										detailsErr
-												.append("<span class=\"errFont\">mz value of required item&nbsp;&nbsp;["
+												.append("mz value of required item ["
 														+ requiredStr
-														+ "]&nbsp;&nbsp;is duplication.</span><br />");
+														+ "] is duplication.");
 									}
 									if (mzNotNumeric) {
 										status = STATUS_ERR;
 										detailsErr
-												.append("<span class=\"errFont\">mz value of required item&nbsp;&nbsp;["
+												.append("mz value of required item ["
 														+ requiredStr
-														+ "]&nbsp;&nbsp;is not numeric.</span><br />");
+														+ "] is not numeric.");
 									}
 									if (intensityNotNumeric) {
 										status = STATUS_ERR;
 										detailsErr
-												.append("<span class=\"errFont\">intensity value of required item&nbsp;&nbsp;["
+												.append("intensity value of required item ["
 														+ requiredStr
-														+ "]&nbsp;&nbsp;is not numeric.</span><br />");
+														+ "] is not numeric.");
 									}
 									if (invalidFormat) {
 										status = STATUS_ERR;
 										detailsErr
-												.append("<span class=\"errFont\">value of required item&nbsp;&nbsp;["
+												.append("value of required item ["
 														+ requiredStr
-														+ "]&nbsp;&nbsp;is not peak format.</span><br />");
+														+ "] is not peak format.");
 									}
 									if (peakNum != 0 && valStrs.size() - 1 == 0) { // 値がない場合はN/Aを追加するようにする（PK$NUM_PEAK:が0の場合は記述なしでも可）
 										if (status.equals(""))
 											status = STATUS_WARN;
 										detailsWarn
-												.append("<span class=\"warnFont\">value of required item&nbsp;&nbsp;[PK$PEAK: ]&nbsp;&nbsp;is no value.  at that time, please add \""
+												.append("value of required item [PK$PEAK: ] is no value.  at that time, please add \""
 														+ DEFAULT_VALUE
-														+ "\". </span><br />");
+														+ "\". ");
 									}
 									if (peakNum != valStrs.size() - 1) {
 										if (status.equals(""))
 											status = STATUS_WARN;
 										detailsWarn
-												.append("<span class=\"warnFont\">value of required item&nbsp;&nbsp;[PK$NUM_PEAK: ]&nbsp;&nbsp;is mismatch or \""
+												.append("value of required item [PK$NUM_PEAK: ] is mismatch or \""
 														+ DEFAULT_VALUE
-														+ "\".</span><br />");
+														+ "\".");
 									}
 								}
 							}
@@ -1784,10 +1770,10 @@ public class RecordValidator {
 			String detailsStr = e.getValue().split("\t")[1];
 			if (regIdList.contains(idStr)) {
 				statusStr = STATUS_WARN;
-				detailsStr += "<span class=\"warnFont\">id&nbsp;&nbsp;["
-						+ idStr + "]&nbsp;&nbsp;of file name&nbsp;&nbsp;["
+				detailsStr += "id ["
+						+ idStr + "] of file name ["
 						+ nameStr
-						+ "]&nbsp;&nbsp;already registered.</span><br />";
+						+ "] already registered.";
 				validationMap.put(nameStr, statusStr + "\t" + detailsStr);
 			}
 		}
