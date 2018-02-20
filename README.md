@@ -1,5 +1,5 @@
-MassBank record validator
-=========================
+MassBank record validator (deprecated)
+======================================
 
 It is required to install the included files into your local maven repository upfront:
 ```
